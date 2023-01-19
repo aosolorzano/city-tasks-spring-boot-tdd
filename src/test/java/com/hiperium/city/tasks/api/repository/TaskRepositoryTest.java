@@ -1,5 +1,6 @@
 package com.hiperium.city.tasks.api.repository;
 
+import com.hiperium.city.tasks.api.common.PostgresContainerBase;
 import com.hiperium.city.tasks.api.model.Task;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -15,8 +16,8 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
-@AutoConfigureTestDatabase
-class TaskRepositoryTest {
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+class TaskRepositoryTest extends PostgresContainerBase {
 
     @Autowired
     private TaskRepository taskRepository;
@@ -26,6 +27,7 @@ class TaskRepositoryTest {
     @BeforeEach
     public void setup() {
         this.task = Task.builder()
+                .id(1000L)
                 .jobId(UUID.randomUUID().toString().substring(0, 30))
                 .name("Test class")
                 .description("Task description.")

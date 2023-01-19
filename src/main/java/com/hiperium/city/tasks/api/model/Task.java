@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.GenericGenerator;
 
 import java.time.ZonedDateTime;
 
@@ -17,7 +18,6 @@ import java.time.ZonedDateTime;
 public class Task {
 
     @Id
-    @GeneratedValue
     private Long id;
 
     @Column(name = "name", length = 31, nullable = false)
