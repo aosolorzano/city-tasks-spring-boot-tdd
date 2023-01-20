@@ -1,14 +1,11 @@
 package com.hiperium.city.tasks.api.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hiperium.city.tasks.api.common.AbstractContainerBaseTest;
 import com.hiperium.city.tasks.api.model.Task;
-import com.hiperium.city.tasks.api.repository.TaskRepository;
 import com.hiperium.city.tasks.api.utils.TasksUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +16,6 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
-import static org.assertj.core.api.Fail.fail;
 import static org.hamcrest.CoreMatchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -52,7 +48,6 @@ class TaskControllerIT extends AbstractContainerBaseTest {
     }
 
     @Test
-    @Order(1)
     @DisplayName("Create Task")
     void givenTaskObject_whenSaveTask_thenReturnSavedTask() throws Exception {
         ResultActions response = this.mockMvc.perform(post(TasksUtil.TASKS_PATH)
@@ -67,7 +62,6 @@ class TaskControllerIT extends AbstractContainerBaseTest {
     }
 
     @Test
-    @Order(2)
     @DisplayName("Find Task by ID")
     void givenTaskId_whenFindTaskById_thenReturnTaskObject() throws Exception {
         ResultActions createdResponse = this.mockMvc.perform(post(TasksUtil.TASKS_PATH)
@@ -85,7 +79,6 @@ class TaskControllerIT extends AbstractContainerBaseTest {
     }
 
     @Test
-    @Order(3)
     @DisplayName("Find all Tasks")
     void givenTasksList_whenFindAllTasks_thenReturnTasksList() throws Exception {
         this.mockMvc.perform(post(TasksUtil.TASKS_PATH)
@@ -94,11 +87,10 @@ class TaskControllerIT extends AbstractContainerBaseTest {
         ResultActions response = mockMvc.perform(get(TasksUtil.TASKS_PATH));
         response.andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.size()", is(1)));
+                .andExpect(jsonPath("$.size()", is(3)));
     }
 
     @Test
-    @Order(4)
     @DisplayName("Update Task")
     void givenModifiedTask_whenUpdateTask_thenReturnUpdateTaskObject() throws Exception {
         ResultActions createdResponse = this.mockMvc.perform(post(TasksUtil.TASKS_PATH)
@@ -134,6 +126,22 @@ class TaskControllerIT extends AbstractContainerBaseTest {
 
         ResultActions deletedResponse = mockMvc.perform(delete(TasksUtil.TASKS_PATH + "/{id}", savedTask.getId()));
         deletedResponse.andExpect(status().isOk())
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("Find not existing Task by ID")
+    void givenTaskId_whenFindTaskById_thenReturnError404() throws Exception {
+        ResultActions findResponse = this.mockMvc.perform(get(TasksUtil.TASKS_PATH + "/{id}", 1000));
+        findResponse.andExpect(status().isNotFound())
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("Delete not existing Task by ID")
+    void givenTaskId_whenDeleteTaskById_thenReturnError404() throws Exception {
+        ResultActions deletedResponse = mockMvc.perform(delete(TasksUtil.TASKS_PATH + "/{id}", 100));
+        deletedResponse.andExpect(status().isNotFound())
                 .andDo(print());
     }
 }

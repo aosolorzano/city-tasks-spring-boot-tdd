@@ -1,9 +1,9 @@
 package com.hiperium.city.tasks.api.controller;
 
+import com.hiperium.city.tasks.api.exception.TaskNotFoundException;
 import com.hiperium.city.tasks.api.model.Task;
 import com.hiperium.city.tasks.api.service.TaskService;
 import com.hiperium.city.tasks.api.utils.TasksUtil;
-import org.quartz.SchedulerException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +23,7 @@ public class TaskController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Task create(@RequestBody Task task) throws SchedulerException {
+    public Task create(@RequestBody Task task) {
         return this.taskService.create(task);
     }
 
@@ -31,7 +31,7 @@ public class TaskController {
     public ResponseEntity<Task> getById(@PathVariable("id") long taskId) {
         return this.taskService.findById(taskId)
                 .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+                .orElseThrow(() -> new TaskNotFoundException("Task not found with ID: " + taskId));
     }
 
     @GetMapping
@@ -44,28 +44,19 @@ public class TaskController {
         return this.taskService.findById(taskId)
                 .map(savedTask -> {
                     BeanUtils.copyProperties(modifiedTask, savedTask);
-                    Task updatedTask = null;
-                    try {
-                        updatedTask = this.taskService.update(savedTask);
-                    } catch (SchedulerException e) {
-                        throw new RuntimeException(e);
-                    }
+                    Task updatedTask = this.taskService.update(savedTask);
                     return new ResponseEntity<>(updatedTask, HttpStatus.OK);
                 })
-                .orElseGet(() -> ResponseEntity.notFound().build());
+                .orElseThrow(() -> new TaskNotFoundException("Task not found with ID: " + taskId));
     }
 
     @DeleteMapping("{id}")
     public ResponseEntity<String> delete(@PathVariable("id") long taskId) {
         return this.taskService.findById(taskId)
                 .map(savedTask -> {
-                    try {
-                        this.taskService.delete(savedTask);
-                    } catch (SchedulerException e) {
-                        throw new RuntimeException(e);
-                    }
+                    this.taskService.delete(savedTask);
                     return new ResponseEntity<>("Resource deleted successfully.", HttpStatus.OK);
                 })
-                .orElseGet(() -> ResponseEntity.notFound().build());
+                .orElseThrow(() -> new TaskNotFoundException("Task not found with ID: " + taskId));
     }
 }

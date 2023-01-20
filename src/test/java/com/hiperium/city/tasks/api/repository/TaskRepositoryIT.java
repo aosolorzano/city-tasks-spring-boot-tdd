@@ -27,7 +27,6 @@ class TaskRepositoryIT extends AbstractContainerBaseTest {
     @BeforeEach
     public void setup() {
         this.task = Task.builder()
-                .id(1000L)
                 .jobId(UUID.randomUUID().toString().substring(0, 30))
                 .name("Test class")
                 .description("Task description.")

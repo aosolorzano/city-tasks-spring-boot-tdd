@@ -1,5 +1,6 @@
 package com.hiperium.city.tasks.api.service;
 
+import com.hiperium.city.tasks.api.exception.TaskScheduleException;
 import com.hiperium.city.tasks.api.model.Task;
 import com.hiperium.city.tasks.api.repository.TaskRepository;
 import com.hiperium.city.tasks.api.utils.JobsUtil;
@@ -33,14 +34,18 @@ public class TaskService {
         this.taskRepository = taskRepository;
     }
 
-    public Task create(Task task) throws SchedulerException {
+    public Task create(Task task) {
         LOGGER.debug("create(): {}", task);
         task.setJobId(TasksUtil.generateJobId());
-        this.createAndScheduleJob(task);
-        task.setId(1L);
-        task.setCreatedAt(ZonedDateTime.now());
-        task.setUpdatedAt(ZonedDateTime.now());
-        return this.taskRepository.save(task);
+        try {
+            this.createAndScheduleJob(task);
+            task.setCreatedAt(ZonedDateTime.now());
+            task.setUpdatedAt(ZonedDateTime.now());
+            return this.taskRepository.save(task);
+        } catch (SchedulerException e) {
+            LOGGER.error("Error creating task: {}", e.getMessage());
+            throw new TaskScheduleException("Error creating task due to scheduler component error.");
+        }
     }
 
     public Optional<Task> findById(Long id) {
@@ -52,35 +57,49 @@ public class TaskService {
         return this.taskRepository.findAll();
     }
 
-    public Task update(Task task) throws SchedulerException {
-        Trigger actualTrigger = this.getCurrentTrigger(task);
-        if (Objects.isNull(actualTrigger)) {
-            LOGGER.warn("Task Trigger not found. Creating a new one for Task ID: {}", task.getId());
-            this.createAndScheduleJob(task);
-        } else {
-            LOGGER.debug("Actual trigger to update: {}", actualTrigger);
-            Trigger newTrigger = JobsUtil.createCronTriggerFromTask(task, this.zoneId);
-            Date newTriggerFirstFire = this.scheduler.rescheduleJob(actualTrigger.getKey(), newTrigger);
-            if (Objects.isNull(newTriggerFirstFire)) {
-                LOGGER.error("Cannot reschedule the Trigger for the Task ID: {}", task.getId());
+    public Task update(Task task) {
+        LOGGER.debug("update(): {}", task);
+        Trigger actualTrigger;
+        try {
+            actualTrigger = this.getCurrentTrigger(task);
+            if (Objects.isNull(actualTrigger)) {
+                LOGGER.warn("Task Trigger not found. Creating a new one for Task ID: {}", task.getId());
+                this.createAndScheduleJob(task);
             } else {
-                LOGGER.info("Successfully rescheduled trigger for Task ID: {}", task.getId());
+                LOGGER.debug("Actual trigger to update: {}", actualTrigger);
+                Trigger newTrigger = JobsUtil.createCronTriggerFromTask(task, this.zoneId);
+                Date newTriggerFirstFire = this.scheduler.rescheduleJob(actualTrigger.getKey(), newTrigger);
+                if (Objects.isNull(newTriggerFirstFire)) {
+                    LOGGER.error("Cannot reschedule the Trigger for the Task ID: {}", task.getId());
+                } else {
+                    LOGGER.info("Successfully rescheduled trigger for Task ID: {}", task.getId());
+                }
             }
+            task.setUpdatedAt(ZonedDateTime.now());
+            return this.taskRepository.save(task);
+        } catch (SchedulerException e) {
+            LOGGER.error("Error updating task: {}", e.getMessage());
+            throw new TaskScheduleException("Error updating task due to scheduler component error.");
         }
-        task.setUpdatedAt(ZonedDateTime.now());
-        return this.taskRepository.save(task);
     }
 
-    public void delete(Task task) throws SchedulerException {
-        Trigger actualTrigger = this.getCurrentTrigger(task);
-        if (Objects.isNull(actualTrigger)) {
-            LOGGER.warn("Task Trigger not found. Nothing to delete for Task ID: {}", task.getId());
-        } else {
-            LOGGER.debug("Actual trigger to delete: {}", actualTrigger);
-            this.scheduler.unscheduleJob(actualTrigger.getKey());
-            LOGGER.info("Successfully unscheduled trigger for Task ID: {}", task.getId());
+    public void delete(Task task) {
+        LOGGER.debug("delete(): {}", task);
+        Trigger actualTrigger;
+        try {
+            actualTrigger = this.getCurrentTrigger(task);
+            if (Objects.isNull(actualTrigger)) {
+                LOGGER.warn("Task Trigger not found. Nothing to delete for Task ID: {}", task.getId());
+            } else {
+                LOGGER.debug("Actual trigger to delete: {}", actualTrigger);
+                this.scheduler.unscheduleJob(actualTrigger.getKey());
+                LOGGER.info("Successfully unscheduled trigger for Task ID: {}", task.getId());
+            }
+            this.taskRepository.delete(task);
+        } catch (SchedulerException e) {
+            LOGGER.error("Error deleting task: {}", e.getMessage());
+            throw new TaskScheduleException("Error deleting task due to scheduler component error.");
         }
-        this.taskRepository.delete(task);
     }
 
 

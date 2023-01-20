@@ -21,7 +21,6 @@ public abstract class AbstractContainerBaseTest {
         registry.add("spring.datasource.url", POSTGRES_CONTAINER::getJdbcUrl);
         registry.add("spring.datasource.username", POSTGRES_CONTAINER::getUsername);
         registry.add("spring.datasource.password", POSTGRES_CONTAINER::getPassword);
-        registry.add("spring.jpa.hibernate.ddl-auto", () -> "update");
     }
 
 }

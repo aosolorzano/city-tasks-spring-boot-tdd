@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.GenericGenerator;
 
 import java.time.ZonedDateTime;
 
@@ -18,7 +17,9 @@ import java.time.ZonedDateTime;
 public class Task {
 
     @Id
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "HIP_CTY_TASKS_SEQ")
+    @SequenceGenerator(name = "HIP_CTY_TASKS_SEQ", sequenceName = "HIP_CTY_TASKS_SEQ", allocationSize = 1)
+    private long id;
 
     @Column(name = "name", length = 31, nullable = false)
     private String name;
@@ -27,10 +28,10 @@ public class Task {
     private String jobId;
 
     @Column(name = "task_hour", nullable = false)
-    private Integer hour;
+    private int hour;
 
     @Column(name = "task_minute", nullable = false)
-    private Integer minute;
+    private int minute;
 
     @Column(name = "execution_days", length = 127, nullable = false)
     private String executionDays;
