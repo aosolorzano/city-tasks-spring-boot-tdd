@@ -2,7 +2,7 @@ package com.hiperium.city.tasks.api.execution;
 
 import com.hiperium.city.tasks.api.model.Task;
 import com.hiperium.city.tasks.api.repository.TaskRepository;
-import com.hiperium.city.tasks.api.utils.JobUtil;
+import com.hiperium.city.tasks.api.utils.JobsUtil;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -24,7 +24,7 @@ public class TaskExecution implements Job {
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
         LOGGER.debug("execute() - START");
-        String jobId = context.getJobDetail().getJobDataMap().getString(JobUtil.TASK_JOB_ID_DATA_KEY);
+        String jobId = context.getJobDetail().getJobDataMap().getString(JobsUtil.TASK_JOB_ID_DATA_KEY);
         Task task = taskRepository.findByJobId(jobId);
         if (task == null) {
             LOGGER.error("execute() - Task not found with Job ID: {}", jobId);

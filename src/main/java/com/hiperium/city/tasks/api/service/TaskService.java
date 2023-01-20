@@ -2,8 +2,8 @@ package com.hiperium.city.tasks.api.service;
 
 import com.hiperium.city.tasks.api.model.Task;
 import com.hiperium.city.tasks.api.repository.TaskRepository;
-import com.hiperium.city.tasks.api.utils.JobUtil;
-import com.hiperium.city.tasks.api.utils.TaskUtil;
+import com.hiperium.city.tasks.api.utils.JobsUtil;
+import com.hiperium.city.tasks.api.utils.TasksUtil;
 import org.quartz.*;
 import org.quartz.impl.matchers.GroupMatcher;
 import org.slf4j.Logger;
@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.ZonedDateTime;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -34,7 +35,7 @@ public class TaskService {
 
     public Task create(Task task) throws SchedulerException {
         LOGGER.debug("create(): {}", task);
-        task.setJobId(TaskUtil.generateJobId(30));
+        task.setJobId(TasksUtil.generateJobId());
         this.createAndScheduleJob(task);
         task.setId(1L);
         task.setCreatedAt(ZonedDateTime.now());
@@ -47,6 +48,9 @@ public class TaskService {
         return this.taskRepository.findById(id);
     }
 
+    public List<Task> findAll() {
+        return this.taskRepository.findAll();
+    }
 
     public Task update(Task task) throws SchedulerException {
         Trigger actualTrigger = this.getCurrentTrigger(task);
@@ -55,7 +59,7 @@ public class TaskService {
             this.createAndScheduleJob(task);
         } else {
             LOGGER.debug("Actual trigger to update: {}", actualTrigger);
-            Trigger newTrigger = JobUtil.createCronTriggerFromTask(task, this.zoneId);
+            Trigger newTrigger = JobsUtil.createCronTriggerFromTask(task, this.zoneId);
             Date newTriggerFirstFire = this.scheduler.rescheduleJob(actualTrigger.getKey(), newTrigger);
             if (Objects.isNull(newTriggerFirstFire)) {
                 LOGGER.error("Cannot reschedule the Trigger for the Task ID: {}", task.getId());
@@ -82,8 +86,8 @@ public class TaskService {
 
     private void createAndScheduleJob(Task task) throws SchedulerException {
         LOGGER.debug("createAndScheduleJob() - BEGIN: {}", task.getName());
-        JobDetail job = JobUtil.createJobDetailFromTask(task);
-        Trigger trigger = JobUtil.createCronTriggerFromTask(task, this.zoneId);
+        JobDetail job = JobsUtil.createJobDetailFromTask(task);
+        Trigger trigger = JobsUtil.createCronTriggerFromTask(task, this.zoneId);
         // TODO: Fix error SchedulerException: Based on configured schedule, the given trigger 'Task#...' will never fire.
         this.scheduler.scheduleJob(job, trigger);
         LOGGER.debug("createAndScheduleJob() - END: {}", task.getJobId());
@@ -92,10 +96,10 @@ public class TaskService {
     private Trigger getCurrentTrigger(Task task) throws SchedulerException {
         LOGGER.debug("getCurrentTrigger() - BEGIN: {}", task.getJobId());
         Trigger trigger = null;
-        for (JobKey jobKey : this.scheduler.getJobKeys(GroupMatcher.jobGroupEquals(JobUtil.TASK_GROUP_NAME))) {
+        for (JobKey jobKey : this.scheduler.getJobKeys(GroupMatcher.jobGroupEquals(JobsUtil.TASK_GROUP_NAME))) {
             LOGGER.debug("Existing JobKey found: {}", jobKey);
             if (jobKey.getName().equals(task.getJobId())) {
-                TriggerKey triggerKey = TriggerKey.triggerKey(task.getJobId(), JobUtil.TASK_GROUP_NAME);
+                TriggerKey triggerKey = TriggerKey.triggerKey(task.getJobId(), JobsUtil.TASK_GROUP_NAME);
                 LOGGER.debug("Existing TriggerKey found: {}", triggerKey);
                 trigger = this.scheduler.getTrigger(triggerKey);
             }

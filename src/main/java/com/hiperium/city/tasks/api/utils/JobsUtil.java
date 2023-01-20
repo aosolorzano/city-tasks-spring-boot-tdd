@@ -9,12 +9,12 @@ import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.*;
 
-public final class JobUtil {
+public final class JobsUtil {
 
     public static final String TASK_GROUP_NAME = "Task#Group";
     public static final String TASK_JOB_ID_DATA_KEY = "taskJobId";
 
-    private JobUtil() {
+    private JobsUtil() {
         // Empty constructor.
     }
 

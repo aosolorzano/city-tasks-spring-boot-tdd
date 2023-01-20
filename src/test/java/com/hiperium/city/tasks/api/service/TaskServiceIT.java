@@ -1,6 +1,6 @@
 package com.hiperium.city.tasks.api.service;
 
-import com.hiperium.city.tasks.api.common.PostgresTestContainerBase;
+import com.hiperium.city.tasks.api.common.AbstractContainerBaseTest;
 import com.hiperium.city.tasks.api.model.Task;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -8,14 +8,16 @@ import org.junit.jupiter.api.Test;
 import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.TestPropertySource;
 
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 
-@SpringBootTest
-class TaskServiceIT extends PostgresTestContainerBase {
+@TestPropertySource(locations = "classpath:application-test.properties")
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+class TaskServiceIT extends AbstractContainerBaseTest {
 
     @Autowired
     private TaskService taskService;

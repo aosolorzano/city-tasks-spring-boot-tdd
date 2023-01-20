@@ -4,7 +4,7 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
 
-public abstract class PostgresTestContainerBase {
+public abstract class AbstractContainerBaseTest {
 
     private static final PostgreSQLContainer POSTGRES_CONTAINER;
 
