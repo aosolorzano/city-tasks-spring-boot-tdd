@@ -1,0 +1,35 @@
+version: '3.9'
+
+networks:
+  tasks-network:
+    driver: bridge
+
+services:
+  tasks-postgres:
+    image: postgres:14.4
+    container_name: tasks-postgres
+    environment:
+      - POSTGRES_DB=HiperiumCityTasksDB
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres123
+    ports:
+      - "5432:5432"
+    networks:
+      - tasks-network
+
+  tasks-api:
+    image: aosolorzano/city-tasks-spring-boot-tdd:1.0.0-arm64
+    container_name: tasks-api
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - TIME_ZONE_ID=-05:00
+      - HIPERIUM_CITY_TASKS_DB_CLUSTER_SECRET={"dbClusterIdentifier":"hiperium-city-tasks-db-cluster","password":"postgres123","dbname":"HiperiumCityTasksDB","engine":"postgres","port":5432,"host":"tasks-postgres","username":"postgres"}
+    depends_on:
+      - tasks-postgres
+    ports:
+      - "8080:8080"
+    networks:
+      - tasks-network

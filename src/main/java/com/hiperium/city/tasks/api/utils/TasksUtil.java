@@ -1,10 +1,13 @@
 package com.hiperium.city.tasks.api.utils;
 
-import com.hiperium.city.tasks.api.model.Task;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hiperium.city.tasks.api.vo.AuroraPostgresSecretVO;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Objects;
 import java.util.UUID;
 
 public final class TasksUtil {
@@ -15,6 +18,15 @@ public final class TasksUtil {
 
     private TasksUtil() {
         // Empty constructor.
+    }
+
+    public static AuroraPostgresSecretVO getAuroraSecretVO() throws JsonProcessingException {
+        String auroraSecret = System.getenv("HIPERIUM_CITY_TASKS_DB_CLUSTER_SECRET");
+        if (Objects.isNull(auroraSecret) || auroraSecret.isBlank()) {
+            throw new IllegalArgumentException("The environment variable HIPERIUM_CITY_TASKS_DB_CLUSTER_SECRET is not set.");
+        }
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.readValue(auroraSecret, AuroraPostgresSecretVO.class);
     }
 
     public static String generateJobId() {

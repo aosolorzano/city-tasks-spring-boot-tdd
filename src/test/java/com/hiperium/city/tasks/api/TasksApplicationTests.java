@@ -6,7 +6,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 @Disabled
 @SpringBootTest
-class TasksApiApplicationTests {
+class TasksApplicationTests {
 
 	@Test
 	void contextLoads() {
