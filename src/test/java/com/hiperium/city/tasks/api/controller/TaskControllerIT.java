@@ -1,7 +1,7 @@
 package com.hiperium.city.tasks.api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hiperium.city.tasks.api.common.AbstractContainerBaseTest;
+import com.hiperium.city.tasks.api.common.PostgresContainerBase;
 import com.hiperium.city.tasks.api.model.Task;
 import com.hiperium.city.tasks.api.utils.TasksUtil;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @TestPropertySource(locations = "classpath:application-test.properties")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-class TaskControllerIT extends AbstractContainerBaseTest {
+class TaskControllerIT extends PostgresContainerBase {
 
     @Autowired
     private MockMvc mockMvc;

@@ -4,12 +4,12 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
 
-public abstract class AbstractContainerBaseTest {
+public abstract class PostgresContainerBase {
 
     private static final PostgreSQLContainer POSTGRES_CONTAINER;
 
     static {
-        POSTGRES_CONTAINER = new PostgreSQLContainer("postgres:14.4")
+        POSTGRES_CONTAINER = new PostgreSQLContainer<>("postgres:14.4")
                 .withUsername("postgres")
                 .withPassword("postgres123")
                 .withDatabaseName("HiperiumCityTasksDB");
@@ -22,5 +22,4 @@ public abstract class AbstractContainerBaseTest {
         registry.add("spring.datasource.username", POSTGRES_CONTAINER::getUsername);
         registry.add("spring.datasource.password", POSTGRES_CONTAINER::getPassword);
     }
-
 }

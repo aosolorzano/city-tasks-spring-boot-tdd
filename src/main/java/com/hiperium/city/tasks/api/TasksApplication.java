@@ -25,7 +25,7 @@ public class TasksApplication {
 		LOGGER.info("main() - END");
 	}
 
-	public static void setDataBaseProperties() throws JsonProcessingException {
+	private static void setDataBaseProperties() throws JsonProcessingException {
 		LOGGER.debug("setDataBaseProperties() - BEGIN");
 		AuroraPostgresSecretVO auroraSecretVO = TasksUtil.getAuroraSecretVO();
 		String sqlConnection = MessageFormat.format(SQL_CONNECTION, auroraSecretVO.getHost(),
@@ -38,7 +38,7 @@ public class TasksApplication {
 		LOGGER.debug("setDataBaseProperties() - END");
 	}
 
-	public static void setTimeZoneProperties() {
+	private static void setTimeZoneProperties() {
 		LOGGER.debug("setTimeZoneProperties() - BEGIN");
 		String timeZoneId = System.getenv("TIME_ZONE_ID");
 		if (Objects.isNull(timeZoneId) || timeZoneId.isBlank()) {

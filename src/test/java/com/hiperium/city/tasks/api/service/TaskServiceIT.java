@@ -1,6 +1,6 @@
 package com.hiperium.city.tasks.api.service;
 
-import com.hiperium.city.tasks.api.common.AbstractContainerBaseTest;
+import com.hiperium.city.tasks.api.common.PostgresContainerBase;
 import com.hiperium.city.tasks.api.model.Task;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -16,7 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @TestPropertySource(locations = "classpath:application-test.properties")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-class TaskServiceIT extends AbstractContainerBaseTest {
+class TaskServiceIT extends PostgresContainerBase {
 
     @Autowired
     private TaskService taskService;
