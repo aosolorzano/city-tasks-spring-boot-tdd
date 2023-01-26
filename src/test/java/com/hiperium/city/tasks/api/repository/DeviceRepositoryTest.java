@@ -15,8 +15,8 @@ import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS;
 @TestInstance(PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestPropertySource(locations = "classpath:application-test.properties")
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-class DeviceRepositoryIT extends AbstractContainerBase {
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+class DeviceRepositoryTest extends AbstractContainerBase {
 
     private static final String DEVICE_ID = "1";
 

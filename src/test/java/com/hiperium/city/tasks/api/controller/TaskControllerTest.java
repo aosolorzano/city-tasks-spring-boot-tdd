@@ -25,8 +25,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestInstance(PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestPropertySource(locations = "classpath:application-test.properties")
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-class TaskControllerIT extends AbstractContainerBase {
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+class TaskControllerTest extends AbstractContainerBase {
+
+    private static final String DEVICE_ID = "1";
 
     @Autowired
     private MockMvc mockMvc;
@@ -47,6 +49,8 @@ class TaskControllerIT extends AbstractContainerBase {
                 .minute(0)
                 .executionDays("MON,WED,SUN")
                 .executionCommand("java -jar test.jar")
+                .deviceId(DEVICE_ID)
+                .deviceAction("ACTIVATE")
                 .build();
 
         ResultActions savedResponse = this.mockMvc.perform(post(TasksUtil.TASKS_PATH)

@@ -17,7 +17,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-class TaskRepositoryIT extends AbstractContainerBase {
+class TaskRepositoryTest extends AbstractContainerBase {
+
+    private static final String DEVICE_ID = "1";
 
     @Autowired
     private TaskRepository taskRepository;
@@ -34,6 +36,8 @@ class TaskRepositoryIT extends AbstractContainerBase {
                 .minute(0)
                 .executionDays("MON,WED,SUN")
                 .executionCommand("java -jar test.jar")
+                .deviceId(DEVICE_ID)
+                .deviceAction("ACTIVATE")
                 .createdAt(ZonedDateTime.now())
                 .updatedAt(ZonedDateTime.now())
                 .build();

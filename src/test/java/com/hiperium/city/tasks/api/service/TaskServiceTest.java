@@ -16,8 +16,10 @@ import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS;
 @TestInstance(PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestPropertySource(locations = "classpath:application-test.properties")
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-class TaskServiceIT extends AbstractContainerBase {
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+class TaskServiceTest extends AbstractContainerBase {
+
+    private static final String DEVICE_ID = "1";
 
     @Autowired
     private TaskService taskService;
@@ -35,6 +37,8 @@ class TaskServiceIT extends AbstractContainerBase {
                 .minute(0)
                 .executionDays("MON,WED,SUN")
                 .executionCommand("java -jar test.jar")
+                .deviceId(DEVICE_ID)
+                .deviceAction("ACTIVATE")
                 .build();
         Task savedTask = this.taskService.create(this.task);
         BeanUtils.copyProperties(savedTask, this.task);
