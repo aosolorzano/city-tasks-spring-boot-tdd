@@ -1,4 +1,37 @@
-# Getting Started
+## Using TDD with Integration Testing and Testcontainers.
+
+* **Author**: [Andres Solorzano](https://www.linkedin.com/in/aosolorzano/).
+* **Level**: Intermediate.
+* **Technologies**: Java, Spring Boot, Testcontainers, Quartz, Postgres, DynamoDB and Docker Compose.
+
+---
+
+## Description
+This project uses the Spring Boot Framework to perform CRUD operations over Tasks records that store Quartz Jobs on AWS Postgres.
+The idea is to use TDD from the beginning of the project and use Testcontainers to run the application and the database in a Docker container.
+
+### Running the application using Docker Compose
+Execute the following command from the root of the project:
+```bash
+docker compose up --build
+```
+
+### Adding a Device item into DynamoDB
+Execute the following command from the root of the project:
+```bash
+aws dynamodb put-item                     \
+    --table-name Devices                  \
+    --endpoint-url http://localhost:8000  \
+    --item file://utils/dynamodb/items/device-item.json
+```
+
+### Getting a Device item from DynamoDB
+Execute the following command:
+```bash
+aws dynamodb scan         \
+  --table-name Devices    \
+  --endpoint-url http://localhost:8000
+```
 
 ### Reference Documentation
 For further reference, please consider the following sections:

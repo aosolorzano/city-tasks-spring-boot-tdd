@@ -21,10 +21,13 @@ public class Task {
     @SequenceGenerator(name = "HIP_CTY_TASKS_SEQ", sequenceName = "HIP_CTY_TASKS_SEQ", allocationSize = 1)
     private long id;
 
-    @Column(name = "name", length = 31, nullable = false)
+    @Column(name = "name", length = 30, nullable = false)
     private String name;
 
-    @Column(name = "job_id", length = 31, nullable = false)
+    @Column(name = "description")
+    private String description;
+
+    @Column(name = "job_id", length = 30, nullable = false)
     private String jobId;
 
     @Column(name = "task_hour", nullable = false)
@@ -33,7 +36,7 @@ public class Task {
     @Column(name = "task_minute", nullable = false)
     private int minute;
 
-    @Column(name = "execution_days", length = 127, nullable = false)
+    @Column(name = "execution_days", length = 30, nullable = false)
     private String executionDays;
 
     @Column(name = "execution_command", nullable = false)
@@ -42,8 +45,11 @@ public class Task {
     @Column(name = "execute_until")
     private ZonedDateTime executeUntil;
 
-    @Column(name = "description")
-    private String description;
+    @Column(name = "device_id", length = 30, nullable = false)
+    private String deviceId;
+
+    @Column(name = "device_action", length = 30, nullable = false)
+    private String deviceAction;
 
     @Column(name = "created_at", nullable = false)
     private ZonedDateTime createdAt;

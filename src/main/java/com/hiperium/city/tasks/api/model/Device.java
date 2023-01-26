@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @DynamoDBTable(tableName = "Devices")
 public class Device {
 
-    @DynamoDBHashKey(attributeName = "Id")
+    @DynamoDBHashKey(attributeName = "id")
     private String id;
     private String name;
     private String description;

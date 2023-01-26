@@ -21,13 +21,13 @@ CREATE TABLE HIP_CTY_TASKS
 (
     id int8 NOT NULL,
     name varchar(30) NOT NULL,
+    description varchar(255) NULL,
     job_id varchar(30) NOT NULL,
     task_hour int4 NOT NULL,
     task_minute int4 NOT NULL,
-    execution_days varchar(127) NOT NULL,
+    execution_days varchar(30) NOT NULL,
     execution_command varchar(255) NOT NULL,
     execute_until TIMESTAMP NULL,
-    description varchar(255) NULL,
     created_at TIMESTAMP NOT NULL,
     updated_at TIMESTAMP NOT NULL,
     PRIMARY KEY (id)

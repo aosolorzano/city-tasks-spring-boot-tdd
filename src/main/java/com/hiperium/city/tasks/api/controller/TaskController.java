@@ -70,4 +70,18 @@ public class TaskController {
                 })
                 .orElseThrow(() -> new TaskNotFoundException(TASK_NOT_FOUND_WITH_ID + taskId));
     }
+
+    @GetMapping("/template")
+    public Task getTaskTemplate() {
+        return Task.builder()
+                .name("Task name")
+                .description("Task description")
+                .hour(12)
+                .minute(0)
+                .executionDays("MON,WED,FRI")
+                .executionCommand("java -jar /home/pi/hiperium-city-1.0.0.jar")
+                .deviceId("1234567890")
+                .deviceAction("ACTIVATE")
+                .build();
+    }
 }

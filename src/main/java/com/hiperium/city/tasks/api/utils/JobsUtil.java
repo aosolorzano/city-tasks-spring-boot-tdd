@@ -1,7 +1,7 @@
 package com.hiperium.city.tasks.api.utils;
 
 import com.hiperium.city.tasks.api.utils.enums.DaysEnum;
-import com.hiperium.city.tasks.api.execution.TaskExecution;
+import com.hiperium.city.tasks.api.job.TaskJob;
 import com.hiperium.city.tasks.api.model.Task;
 import org.quartz.*;
 
@@ -19,7 +19,7 @@ public final class JobsUtil {
     }
 
     public static JobDetail createJobDetailFromTask(Task task) {
-        return JobBuilder.newJob(TaskExecution.class)
+        return JobBuilder.newJob(TaskJob.class)
                 .withIdentity(task.getJobId(), TASK_GROUP_NAME)
                 .usingJobData(TASK_JOB_ID_DATA_KEY, task.getJobId())
                 .build();

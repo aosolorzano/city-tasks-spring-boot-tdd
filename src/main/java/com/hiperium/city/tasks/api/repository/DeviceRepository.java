@@ -6,6 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
+import java.util.Objects;
+
 @Repository
 public class DeviceRepository {
 
@@ -17,8 +19,16 @@ public class DeviceRepository {
         this.dynamoDBMapper = dynamoDBMapper;
     }
 
-    public Device findById(long id) {
+    public Device findById(String id) {
         LOGGER.debug("findById(): {}", id);
         return dynamoDBMapper.load(Device.class, id);
+    }
+
+    public void update(Device device) {
+        LOGGER.debug("save(): {}", device);
+        if (Objects.isNull(device.getId()) || device.getId().isBlank()) {
+            throw new IllegalArgumentException("Device ID cannot be null");
+        }
+        this.dynamoDBMapper.save(device);
     }
 }
